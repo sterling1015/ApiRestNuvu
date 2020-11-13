@@ -8,13 +8,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
+@Table(name = "persona")
 public class PersonaEntity {
 
 	@Id
@@ -23,8 +26,9 @@ public class PersonaEntity {
 
 	private String nombre;
 	private String apellido;
-	private int telefono;
-	@ManyToMany(fetch = FetchType.LAZY)
+	private long telefono;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "tarjetaCredito", referencedColumnName = "idTarjeta")
 	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	private TarjetaCreditoEntity tarjetaCredito;
@@ -32,11 +36,16 @@ public class PersonaEntity {
 	@Temporal(TemporalType.DATE)
 	private Date fechaIngreso;
 	
+	@PrePersist
+	public void prePersist() {
+		fechaIngreso = new Date();	
+	}
+	
 	public PersonaEntity() {
 		
 	}
 
-	public PersonaEntity(int id, String nombre, String apellido, int telefono, TarjetaCreditoEntity tarjetaCredito,
+	public PersonaEntity(int id, String nombre, String apellido, long telefono, TarjetaCreditoEntity tarjetaCredito,
 			Date fechaIngreso) {
 		this.id = id;
 		this.nombre = nombre;
@@ -71,11 +80,11 @@ public class PersonaEntity {
 		this.apellido = apellido;
 	}
 
-	public int getTelefono() {
+	public long getTelefono() {
 		return telefono;
 	}
 
-	public void setTelefono(int telefono) {
+	public void setTelefono(long telefono) {
 		this.telefono = telefono;
 	}
 
