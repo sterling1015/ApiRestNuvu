@@ -3,6 +3,7 @@ package com.personas.apiRest.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -23,7 +24,7 @@ import com.personas.apiRest.entity.PersonaEntity;
 import com.personas.apiRest.service.PersonaService;
 
 @RestController
-@RequestMapping("/persona")
+@RequestMapping("/api")
 public class PersonaController {
 
 	Map<String, Object> response = new HashMap<String, Object>();
@@ -36,10 +37,20 @@ public class PersonaController {
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@GetMapping("/lista")
+	@GetMapping("/empleados")
 	public ResponseEntity<List<PersonaEntity>> listaPersonas() {
 		List<PersonaEntity> lista = personaService.getListaPersonas();
 		return new ResponseEntity(lista, HttpStatus.OK);
+	}
+	
+	/**
+	 * Metodo que busca registro de empleado por id
+	 * @param id
+	 * @return
+	 */
+	@GetMapping("/empleados/{id}")
+	public Optional<PersonaEntity> showById(@PathVariable int id) {
+		return this.personaService.findById(id);
 	}
 
 	/**
@@ -48,7 +59,7 @@ public class PersonaController {
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@PostMapping("/create")
+	@PostMapping("/empleados")
 	public ResponseEntity<?> create(@RequestBody PersonaDto personaDto) {
 
 		PersonaEntity personaNueva = new PersonaEntity();
@@ -82,7 +93,7 @@ public class PersonaController {
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@PutMapping("/update/{id}")
+	@PutMapping("/empleados/{id}")
 	public ResponseEntity<?> update(@RequestBody PersonaDto personaDto, @PathVariable("id") int id) {
 
 		PersonaEntity personaEntity = personaService.findById(id).get();
@@ -115,7 +126,7 @@ public class PersonaController {
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@DeleteMapping("/delete/{id}")
+	@DeleteMapping("/empleados/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") int id){
 		
 		if (!personaService.existsById(id)) {
